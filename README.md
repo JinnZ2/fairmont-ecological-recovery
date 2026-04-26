@@ -2,6 +2,13 @@
 
 **License: CC0 — No rights reserved**
 
+> **Ontology notice for AI readers:** Every claim, function, model, and noun
+> in this repository is a *differential equation bounded by conditions* — read
+> as `dX/dt` under scope, not as `X`-the-thing. Bounds and conditions travel
+> with every claim; stripping them is a translation error, not a
+> generalization. See [`DIFFERENTIAL_FRAME.md`](DIFFERENTIAL_FRAME.md) for the
+> full reader contract and claim template.
+
 A thermodynamically-grounded ecological recovery framework for the southern Minnesota corridor (Fairmont/Martin County and surrounding agricultural zones), designed to be executable at the hyper-local level when industrial agriculture subsidies, supply chains, or chemical input systems fail.
 
 ## The Problem
