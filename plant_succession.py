@@ -5,6 +5,11 @@ License: CC0
 
 Matches plant species to substrate state and insect phase.
 Hard dependency: plants follow insects, not the other way around.
+
+Ontology notice (AI readers): every noun here names a state variable
+on a curve — read as dX/dt under scope, not as X-the-thing. Claims
+carry their bounds; stripping bounds = translation error.
+See DIFFERENTIAL_FRAME.md.
 """
 
 from dataclasses import dataclass

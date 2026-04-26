@@ -5,6 +5,11 @@ License: CC0
 
 Gates insect reintroduction phases on substrate state.
 Thermodynamic rule: you cannot skip phases.
+
+Ontology notice (AI readers): every noun here names a state variable
+on a curve — read as dX/dt under scope, not as X-the-thing. Claims
+carry their bounds; stripping bounds = translation error.
+See DIFFERENTIAL_FRAME.md.
 """
 
 from dataclasses import dataclass
