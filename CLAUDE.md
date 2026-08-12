@@ -10,12 +10,16 @@ All data is based on field observations from March 2026 documenting ecological c
 
 ```
 substrate.py          — Layer 0: Substrate (soil/water) assessment & scoring
+soil_metrology.py     — Layer 0.5: Metrological audit, RT_soil, breach timeline
+metrology_harness.py  — Falsification harness for Layer 0.5 (known-lie injection)
 insect_sequence.py    — Layer 1: Insect species sequencing engine
 plant_succession.py   — Layer 2: Plant succession matching
 water_recovery.py     — Layer 3: Water/stream recovery triage
 knowledge_bridge.py   — Layer 4: Community knowledge & collapse protocol
 corridor_report.py    — Integrated multi-layer corridor reporting
 README.md             — Full framework documentation
+METROLOGY_AUDIT.md    — Layer 0.5 design decisions, provenance, discarded options
+DIFFERENTIAL_FRAME.md — AI reader contract (claims are dX/dt under bounds)
 ```
 
 ## Tech Stack
@@ -31,11 +35,13 @@ README.md             — Full framework documentation
 Each module has a `if __name__ == "__main__"` block with example usage:
 
 ```bash
-python substrate.py         # Layer 0 — soil/water field assessment
-python insect_sequence.py   # Layer 1 — insect sequencing
-python water_recovery.py    # Layer 3 — stream triage
-python knowledge_bridge.py  # Layer 4 — community inventory
-python corridor_report.py   # Full integrated corridor report
+python substrate.py           # Layer 0   — soil/water field assessment
+python soil_metrology.py      # Layer 0.5 — metrological audit + RT_soil
+python metrology_harness.py   # Layer 0.5 — falsification harness (exit 0 = pass)
+python insect_sequence.py     # Layer 1   — insect sequencing
+python water_recovery.py      # Layer 3   — stream triage
+python knowledge_bridge.py    # Layer 4   — community inventory
+python corridor_report.py     # Full integrated corridor report
 ```
 
 The primary entry point is `corridor_report.py` which imports and orchestrates all layers.
@@ -47,6 +53,10 @@ The primary entry point is `corridor_report.py` which imports and orchestrates a
 The framework enforces thermodynamic ordering — you cannot skip layers:
 
 - **Layer 0 (Substrate)** must be assessed first → determines soil/water state
+- **Layer 0.5 (Metrology)** gates *trust* in any instrumented number → audits
+  measurement blindness before a value may license extraction. Semi-independent:
+  it consumes telemetry, not layer output, and reads Layer 0's own field
+  protocol as M3/ASSUMED
 - **Layer 1 (Insects)** is gated by substrate state → only viable species are recommended
 - **Layer 2 (Plants)** depends on both soil state and insect phase
 - **Layer 3 (Water)** operates semi-independently for stream triage
@@ -59,6 +69,11 @@ All models use `@dataclass`. Key types:
 | Type | Module | Purpose |
 |------|--------|---------|
 | `FieldAssessment` | substrate.py | No-lab soil/water observation |
+| `Telemetry` | soil_metrology.py | One instrumented reading + its provenance |
+| `AuditReport` | soil_metrology.py | Blindness mask + confidence gradient |
+| `CarbonLedger` | soil_metrology.py | Annual stable-carbon mass balance |
+| `BandProfile` | soil_metrology.py | Per-depth state + decay velocities |
+| `SiteContext` | soil_metrology.py | Clay, recovery lag, RT baseline |
 | `InsectSpec` | insect_sequence.py | Species with phase/tolerance/habitat |
 | `PlantSpec` | plant_succession.py | Plants with succession phase/soil tolerance |
 | `StreamAssessment` | water_recovery.py | Stream observation tracking |
@@ -77,6 +92,11 @@ All models use `@dataclass`. Key types:
 | `SuccessionPhase` (IntEnum) | 0-3 | Plant succession stages |
 | `SkillCategory` | 8 categories | Community skill types |
 | `Urgency` | IMMEDIATE → LONG_TERM | Action priority |
+| `Rung` | M0-M3 | Distance from physical contact with the measurand |
+| `BlindnessMode` | NULL, ALIAS, SATURATION, GATE, FRAME | Ways a number is not the thing |
+| `DepthBand` | 0-10, 10-20, 20-30, 30-60cm | Sliding-window horizons |
+| `RTStatus` | BUILDING → LIQUIDATING, UNVERIFIABLE | Throughput verdict |
+| `ExtractionVerdict` | PERMITTED → HALT | Hard-boundary enforcement |
 
 ### Scoring System
 
@@ -118,12 +138,26 @@ Module-level constants serve as lookup tables:
 - No formal test framework (no pytest/unittest)
 - Each module's `__main__` block serves as a runnable example/smoke test
 - To verify the system works: `python corridor_report.py` should produce a formatted multi-layer report
+- `python metrology_harness.py` is the one executable check with a pass/fail
+  contract: it injects readings whose falsity is known in advance and exits
+  non-zero if a blindness filter failed to alter the answer. Run it after any
+  change to `soil_metrology.py` — several of its cases exist because they
+  caught real defects in that module (an inert confidence ceiling, a topsoil
+  index applied to subsoil)
 
 ## Extending the Framework
 
 - **Add species**: Append `InsectSpec` entries to `SPECIES_DB` in `insect_sequence.py`
 - **Add plants**: Append `PlantSpec` entries to `PLANT_DB` in `plant_succession.py`
 - **Add chemicals**: Add entries to `CHEMICAL_PROFILES` in `substrate.py`
+- **Add instruments**: Add a `SENSOR_PROFILES` entry in `soil_metrology.py`
+  naming what the instrument physically *cannot* see, its confidence ceiling,
+  and the corroborating sensor that closes the gap — then add a known-lie case
+  to `metrology_harness.py`. An instrument with no declared blind spot is an
+  unaudited claim, not a clean one
+- **Change a constant**: any constant in an enforcement path needs a
+  `PROVENANCE` entry stating its origin and bounds, labelled as
+  literature-grounded, stated judgement, or unvalidated placeholder
 - **Add skills**: Extend `SkillCategory` enum and create `KnowledgeHolder` entries in `knowledge_bridge.py`
 - **New layers**: Follow the existing pattern — dataclass models, enum states, filtering functions, report generator
 
