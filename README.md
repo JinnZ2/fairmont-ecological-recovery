@@ -19,11 +19,12 @@ This is not a prediction. This is a field observation.
 
 ## Framework Architecture
 
-Layer 0: SUBSTRATE ASSESSMENT ─── Where are we?
-Layer 1: INSECT SEQUENCING   ─── Rebuild the base
-Layer 2: PLANT SUCCESSION    ─── Rebuild the structure
-Layer 3: WATER RECOVERY      ─── Rebuild the cycle
-Layer 4: KNOWLEDGE BRIDGE    ─── Rebuild the people
+Layer 0:   SUBSTRATE ASSESSMENT ─── Where are we?
+Layer 0.5: METROLOGICAL AUDIT   ─── Can we see what we think we see?
+Layer 1:   INSECT SEQUENCING    ─── Rebuild the base
+Layer 2:   PLANT SUCCESSION     ─── Rebuild the structure
+Layer 3:   WATER RECOVERY       ─── Rebuild the cycle
+Layer 4:   KNOWLEDGE BRIDGE     ─── Rebuild the people
 
 
 Each layer has hard dependencies on the layer below it. You cannot skip layers. You cannot shortcut timelines. Thermodynamics doesn't negotiate.
@@ -55,6 +56,93 @@ Each layer has hard dependencies on the layer below it. You cannot skip layers. 
 | Glyphosate | 30-180 days | Microbial community, nutrient chelation | Mycorrhizal fungi visible on roots |
 | Atrazine | 60-150 days | Amphibians, aquatic life | Frog chorus returns |
 | Chlorpyrifos | 60-120 days | Broad-spectrum insect kill | Fly populations rebound |
+
+## Layer 0.5: Metrological Audit
+
+*Full design record: [`METROLOGY_AUDIT.md`](METROLOGY_AUDIT.md) · code:
+[`soil_metrology.py`](soil_metrology.py) · tests:
+[`metrology_harness.py`](metrology_harness.py)*
+
+Layer 0 assumes you can see the substrate. This layer does not.
+
+Soil structural collapse returns its error signal 15-40 years after the
+decision that caused it — longer than a land lease, longer than a planning
+horizon. Nothing in the feedback loop corrects the behaviour in time, so the
+correction has to be built into the objective function in advance. Until then,
+an optimiser reads the absence of an error signal as proof of safety,
+precisely because its sensors cannot produce that signal.
+
+This layer answers one question before any number licenses extraction:
+**can this instrument physically see the thing it is being read as evidence
+about?**
+
+### Blindness taxonomy
+
+| Mode | The number says | The ground says | Caught by |
+|---|---|---|---|
+| NULL | thriving fungal network | relic DNA from a dead one | no respiration |
+| ALIAS | biology is active | old carbon is being burned | pore connectivity falling |
+| SATURATION | SOC is 2.4% | model extrapolating past its calibration | clay outside domain |
+| GATE | low fungal biomass | assay never extracted the spores | primer/lysis coverage |
+| FRAME | no compaction | probe stopped above the pan | sampled depth < 30cm |
+
+Every reading carries a grounding rung — M0 (physical extraction) through M3
+(inferred from correlated surface signals) — and each active blind spot costs
+confidence directly *and* imposes a ceiling.
+
+### The asymmetry
+
+> A reading too blind to trust **cannot certify that extraction is safe**,
+> but it **can still stop it**.
+
+This applies inward first. The Layer 0 no-lab protocol — spade, insect scan,
+bird listen — audits as **M3 / ASSUMED** and cannot license extraction. A
+spade goes 15-20cm; the structural failure is at 30-60cm. The field protocol
+is sufficient to declare an emergency and insufficient to certify safety. An
+audit that exempts its author's own instruments is not an audit.
+
+### Regenerative throughput
+
+```
+     (C_humified + Reinvestment_organic) × Bio_restored
+RT = ──────────────────────────────────────────────────
+       C_mineralized + C_caloric_removed + C_eroded
+```
+
+`RT > 1` building · `RT = 1` steady · `RT < 1` liquidating principal.
+
+Harvested carbon sits in the denominator because exported yield is carbon
+that left the field. Unity is not a chosen threshold — because the ratio is
+closed, it is the break-even of the mass balance.
+
+### Hard boundaries
+
+Non-negotiable, evaluated *before* yield. The breach timeline comes first: a
+floor enforced at the moment of crossing is enforced 15-40 years too late.
+
+1. **Breach window vs recovery lag.** Leading proxies (glomalin, F:B,
+   humic:fulvic, qCO₂) set an implied SOC decay constant; when the window to
+   the floor is shorter than the structural recovery lag, the damage outruns
+   the repair and the path halts — *even if RT is above unity*.
+2. **SOC floor**, scaled to clay via the SOC:clay ratio and attenuated with
+   depth, replacing a flat 2.0% that was unreachable in sand and permissive
+   in heavy clay.
+3. **Subsoil compaction** ≥ 2.0 MPa at 30-60cm → mandatory deep-root rotation.
+4. **F:B ratio** floor — *unvalidated placeholder*, see provenance.
+
+The controlling depth is not chosen in advance. A sliding window across
+0-10 / 10-20 / 20-30 / 30-60cm lets the soil pick: in the worked example the
+10-20cm band breaches first despite 0-10cm decaying four times faster.
+
+### Honesty about the numbers
+
+Constants are labelled by origin in `PROVENANCE`, because an unfalsifiable
+constant in an enforcement path is how an arbitrary number acquires the
+authority of a physical law. Several are stated judgements; one (the F:B
+floor) is an unvalidated placeholder that says so in its own breach message.
+The 29-case harness tests the filters against lies whose falsity was known in
+advance — it cannot test them against a field. Ground truth still requires
+paired physical cores from the same coordinates.
 
 ## Layer 1: Insect Sequencing
 
@@ -281,6 +369,13 @@ Layer 0: SUBSTRATE ASSESSMENT
 ├── Water contamination mapping (ag chemical load by stream)
 ├── Refugia identification (ditches, fence lines, abandoned plots, wetlands)
 └── Chemical persistence timelines by compound class
+
+Layer 0.5: METROLOGICAL AUDIT (can the instrument see it?)
+├── Blindness taxonomy (null / alias / saturation / gate / frame)
+├── Grounding rungs M0-M3 + confidence gradient per reading
+├── RT_soil regenerative throughput under mass-balance closure
+├── Depth horizon resolution (0-10 / 10-20 / 20-30 / 30-60cm)
+└── Breach timeline vs recovery lag → hard extraction boundary
 
 Layer 1: INSECT SEQUENCING (chemical tolerance order)
 ├── Phase 1: Dung beetles, ground beetles, ants (soil builders)
